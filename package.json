@@ -2,7 +2,7 @@
   "name": "playlistrememberer-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -15,7 +15,10 @@
     "eslint-plugin-vue": "^9.9.0"
   },
   "scripts": {
-    "test": "npm run dev"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --format visualstudio ./",
+    "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore --format visualstudio --fix ./"
   },
   "repository": {
     "type": "git",
