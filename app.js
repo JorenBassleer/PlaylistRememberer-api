@@ -12,11 +12,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true,
-});
+}));
 app.use('/', routes());
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     app.listen(PORT);
   })
   .catch(() => console.log('err'));
-  
