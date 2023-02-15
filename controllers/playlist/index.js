@@ -25,4 +25,4 @@ module.exports = {
   createPlaylist,
   updatePlaylistById,
   deletePlaylistById,
-}
+};
