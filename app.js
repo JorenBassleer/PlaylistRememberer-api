@@ -18,4 +18,4 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     app.listen(PORT);
   })
-  .catch(() => console.log('err'));
+  .catch((error) => console.log('err', error));

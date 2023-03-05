@@ -7,4 +7,5 @@ module.exports = () => {
   const app = Router();
   video(app);
   playlist(app);
+  return app;
 };
