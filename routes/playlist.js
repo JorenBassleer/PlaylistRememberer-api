@@ -22,7 +22,6 @@ module.exports = (app) => {
     }
   });
   router.get('/:id', async (req, res) => {
-    console.log('params:', req.params.id)
     try {
       const foundPlaylist = await playlistController.findPlaylistById(req.params.id);
       return res.status(200).json(foundPlaylist);
