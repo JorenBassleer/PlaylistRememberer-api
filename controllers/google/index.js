@@ -9,7 +9,7 @@ const SCOPES = ['https://www.googleapis.com/auth/youtube.readonly'];
 const TOKEN_DIR = `${process.env.HOME || process.env.HOMEPATH
     || process.env.USERPROFILE}/.credentials/`;
 const TOKEN_PATH = `${TOKEN_DIR}youtube-nodejs-quickstart.json`;
-const googleAPIKEY = process.env.YOUTUBE_API_KEY;
+
 function getChannel(auth) {
   const service = google.youtube('v3');
   service.channels.list({
@@ -39,7 +39,7 @@ function storeToken(token) {
   try {
     fs.mkdirSync(TOKEN_DIR);
   } catch (err) {
-    if (err.code != 'EEXIST') {
+    if (err.code !== 'EEXIST') {
       throw err;
     }
   }
