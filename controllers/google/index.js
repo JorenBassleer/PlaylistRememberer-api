@@ -1,9 +1,35 @@
 const fs = require('fs');
 const { google } = require('googleapis');
-const OAuth2 = google.auth.OAuth2;
+
+const { OAuth2 } = google.auth;
 require('dotenv').config();
 
 const googleAPIKEY = process.env.YOUTUBE_API_KEY;
+function getChannel(auth) {
+  const service = google.youtube('v3');
+  service.channels.list({
+    auth,
+    part: 'snippet,contentDetails,statistics',
+    forUsername: 'GoogleDevelopers',
+  }, (err, response) => {
+    if (err) {
+      console.log(`The API returned an error: ${err}`);
+      return;
+    }
+    const channels = response.data.items;
+    if (channels.length == 0) {
+      console.log('No channel found.');
+    } else {
+      console.log(
+        'This channel\'s ID is %s. Its title is \'%s\', and '
+                  + 'it has %s views.',
+        channels[0].id,
+        channels[0].snippet.title,
+        channels[0].statistics.viewCount,
+      );
+    }
+  });
+}
 function storeToken(token) {
   try {
     fs.mkdirSync(TOKEN_DIR);
@@ -14,22 +40,22 @@ function storeToken(token) {
   }
   fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
     if (err) throw err;
-    console.log('Token stored to ' + TOKEN_PATH);
+    console.log(`Token stored to ${TOKEN_PATH}`);
   });
 }
 const getNewToken = (oauth2Client, callback) => {
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
-    scope: SCOPES
+    scope: SCOPES,
   });
   console.log('Authorize this app by visiting this url: ', authUrl);
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
-  rl.question('Enter the code from that page here: ', function(code) {
+  rl.question('Enter the code from that page here: ', (code) => {
     rl.close();
-    oauth2Client.getToken(code, function(err, token) {
+    oauth2Client.getToken(code, (err, token) => {
       if (err) {
         console.log('Error while trying to retrieve access token', err);
         return;
@@ -39,10 +65,10 @@ const getNewToken = (oauth2Client, callback) => {
       callback(oauth2Client);
     });
   });
-}
-fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+};
+fs.readFile('client_secret.json', (err, content) => {
   if (err) {
-    console.log('Error loading client secret file: ' + err);
+    console.log(`Error loading client secret file: ${err}`);
     return;
   }
   // Authorize a client with the loaded credentials, then call the YouTube API.
@@ -55,7 +81,7 @@ const authorize = (credentials, callback) => {
   const oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, function(err, token) {
+  fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) {
       getNewToken(oauth2Client, callback);
     } else {
@@ -63,4 +89,4 @@ const authorize = (credentials, callback) => {
       callback(oauth2Client);
     }
   });
-}
+};
