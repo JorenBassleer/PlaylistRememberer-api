@@ -6,7 +6,6 @@ const playlistController = require('../controllers/playlist');
 module.exports = (app) => {
   app.use('/playlist', router);
   router.get('/', async (req, res) => {
-    console.log('test');
     try {
       const playlsitRecords = await playlistController.getAllPlaylists();
       return res.status(200).json(playlsitRecords);
@@ -23,6 +22,7 @@ module.exports = (app) => {
     }
   });
   router.get('/:id', async (req, res) => {
+    console.log('params:', req.params.id)
     try {
       const foundPlaylist = await playlistController.findPlaylistById(req.params.id);
       return res.status(200).json(foundPlaylist);
