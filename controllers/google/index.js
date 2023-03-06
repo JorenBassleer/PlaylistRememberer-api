@@ -2,8 +2,13 @@ const fs = require('fs');
 const { google } = require('googleapis');
 
 const { OAuth2 } = google.auth;
+const readline = require('readline');
 require('dotenv').config();
 
+const SCOPES = ['https://www.googleapis.com/auth/youtube.readonly'];
+const TOKEN_DIR = `${process.env.HOME || process.env.HOMEPATH
+    || process.env.USERPROFILE}/.credentials/`;
+const TOKEN_PATH = `${TOKEN_DIR}youtube-nodejs-quickstart.json`;
 const googleAPIKEY = process.env.YOUTUBE_API_KEY;
 function getChannel(auth) {
   const service = google.youtube('v3');
@@ -17,7 +22,7 @@ function getChannel(auth) {
       return;
     }
     const channels = response.data.items;
-    if (channels.length == 0) {
+    if (channels.length === 0) {
       console.log('No channel found.');
     } else {
       console.log(
@@ -43,6 +48,7 @@ function storeToken(token) {
     console.log(`Token stored to ${TOKEN_PATH}`);
   });
 }
+
 const getNewToken = (oauth2Client, callback) => {
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
@@ -60,20 +66,14 @@ const getNewToken = (oauth2Client, callback) => {
         console.log('Error while trying to retrieve access token', err);
         return;
       }
+      // eslint-disable-next-line no-param-reassign
       oauth2Client.credentials = token;
       storeToken(token);
       callback(oauth2Client);
     });
   });
 };
-fs.readFile('client_secret.json', (err, content) => {
-  if (err) {
-    console.log(`Error loading client secret file: ${err}`);
-    return;
-  }
-  // Authorize a client with the loaded credentials, then call the YouTube API.
-  authorize(JSON.parse(content), getChannel);
-});
+
 const authorize = (credentials, callback) => {
   const clientSecret = credentials.installed.client_secret;
   const clientId = credentials.installed.client_id;
@@ -90,3 +90,12 @@ const authorize = (credentials, callback) => {
     }
   });
 };
+
+fs.readFile('client_secret.json', (err, content) => {
+  if (err) {
+    console.log(`Error loading client secret file: ${err}`);
+    return;
+  }
+  // Authorize a client with the loaded credentials, then call the YouTube API.
+  authorize(JSON.parse(content), getChannel);
+});
