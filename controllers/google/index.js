@@ -75,9 +75,9 @@ const getNewToken = (oauth2Client, callback) => {
 };
 
 const authorize = (credentials, callback) => {
-  const clientSecret = credentials.installed.client_secret;
-  const clientId = credentials.installed.client_id;
-  const redirectUrl = credentials.installed.redirect_uris[0];
+  const clientSecret = credentials.web.client_secret;
+  const clientId = credentials.web.client_id;
+  const redirectUrl = credentials.web.redirect_uris[0];
   const oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
 
   // Check if we have previously stored a token.
