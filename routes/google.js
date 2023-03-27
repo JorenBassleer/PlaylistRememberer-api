@@ -8,6 +8,7 @@ module.exports = (app) => {
   router.get('/', async (req, res) => {
     try {
       passport.authenticate('google', { scope: 'profile' });
+      return res.status(200);
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -15,6 +16,7 @@ module.exports = (app) => {
   router.get('/callback', async (req, res) => {
     try {
       passport.authenticate('google', (_req, _res) => _res.status(200));
+      return res.status(200);
     } catch (err) {
       return res.status(500).json(err);
     }
