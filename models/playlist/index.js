@@ -9,7 +9,7 @@ const playlistSchema = new Schema({
     type: String,
   },
   videos: [{ type: Schema.Types.ObjectId, ref: 'Video' }],
-  user: { type: Schema.types.ObjectId, ref: 'User' },
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
 const Playlist = model('Playlist', playlistSchema);
