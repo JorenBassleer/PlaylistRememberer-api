@@ -1,6 +1,5 @@
 const express = require('express');
 const { google } = require('googleapis');
-const passport = require('passport');
 
 const crypto = require('crypto');
 const secrets = require('../client_secret.json');
@@ -35,12 +34,21 @@ module.exports = (app) => {
       return res.status(500).json(err);
     }
   });
-  router.get('/callback', async (req, res) => {
-    try {
-      passport.authenticate('google', (_req, _res) => _res.status(200));
-      return res.status(200);
-    } catch (err) {
-      return res.status(500).json(err);
+  const url = require('url');
+
+  // Receive the callback from Google's OAuth 2.0 server.
+  app.get('/oauth2callback', async (req, res) => {
+    coonsole.log('autgh callback');
+    const q = url.parse(req.url, true).query;
+
+    if (q.error) { // An error response e.g. error=access_denied
+      // eslint-disable-next-line no-console
+      console.log(`Error:${q.error}`);
+    } else if (q.state !== req.session.state) { // check state value
+      res.end('State mismatch. Possible CSRF attack');
+    } else {
+      const { tokens } = await oauth2Client.getToken(q.code);
+      oauth2Client.setCredentials(tokens);
     }
   });
 };
