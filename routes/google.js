@@ -22,33 +22,40 @@ module.exports = (app) => {
       const state = crypto.randomBytes(32).toString('hex');
 
       req.session.state = state;
-
+      // eslint-disable-next-line no-console
+      console.log('req session:', req.session.state);
       const authorizationUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: scopes,
         include_granted_scopes: true,
         state,
       });
+      req.session.save();
       return res.status(200).json(authorizationUrl);
     } catch (err) {
       return res.status(500).json(err);
     }
   });
-  const url = require('url');
 
   // Receive the callback from Google's OAuth 2.0 server.
-  app.get('/oauth2callback', async (req, res) => {
-    coonsole.log('autgh callback');
-    const q = url.parse(req.url, true).query;
+  router.post('/oauth2callback', async (req, res) => {
+    try {
+      const { code, state } = req.body;
 
-    if (q.error) { // An error response e.g. error=access_denied
+      if (!code || !state) {
+        return res.status(400).json('Missing code or state in the request body');
+      }
       // eslint-disable-next-line no-console
-      console.log(`Error:${q.error}`);
-    } else if (q.state !== req.session.state) { // check state value
-      res.end('State mismatch. Possible CSRF attack');
-    } else {
-      const { tokens } = await oauth2Client.getToken(q.code);
+      console.log('state', req.session.state);
+      if (state !== req.session.state) {
+        return res.status(403).json('State mismatch. Possible CSRF attack');
+      }
+
+      const { tokens } = await oauth2Client.getToken(code);
       oauth2Client.setCredentials(tokens);
+      return res.status(200).json({ tokens });
+    } catch (error) {
+      return res.status(500).json(error);
     }
   });
 };
