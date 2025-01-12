@@ -18,15 +18,19 @@ app.use(session({
   secret: 'your-secret-key',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false },
 }));
-app.use(cors());
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true,
 }));
 app.use('/', routes());
-app.use(passport.initialize());
 
 // Start the server
 app.listen(PORT, () => console.log('Server started'));
