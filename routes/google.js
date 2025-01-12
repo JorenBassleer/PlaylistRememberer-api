@@ -16,7 +16,11 @@ module.exports = (app) => {
     }
   });
 
-  // Receive the callback from Google's OAuth 2.0 server.
+  router.get('/validate', async (req, res) => {
+    if (req.session.state === googleController.state) return res.status(200).json({ authenticated: true });
+    return res.status(401).json({ authenticated: false });
+  });
+
   router.post('/oauth2callback', async (req, res) => {
     try {
       const { code, state } = req.body;

@@ -23,7 +23,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.APP_URI,
   credentials: true,
 }));
 app.use(express.json());
