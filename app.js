@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const session = require('express-session');
 require('dotenv').config();
 const cors = require('cors');
 const passport = require('passport');
@@ -12,6 +13,13 @@ const { MONGODB_URI } = process.env;
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch((error) => console.log('err', error));
+
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false },
+}));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({
