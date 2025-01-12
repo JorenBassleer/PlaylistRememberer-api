@@ -1,12 +1,11 @@
 const { google } = require('googleapis');
-
+require('dotenv').config();
 const crypto = require('crypto');
-const secrets = require('../../client_secret.json');
 
 const oauth2Client = new google.auth.OAuth2(
-  secrets.web.client_id,
-  secrets.web.client_secret,
-  secrets.web.redirect_uris[0],
+  process.env.client_id,
+  process.env.client_secret,
+  process.env.redirect_uris,
 );
 
 const scopes = ['https://www.googleapis.com/auth/youtube.force-ssl'];
