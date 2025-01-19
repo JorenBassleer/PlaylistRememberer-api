@@ -12,6 +12,8 @@ const scopes = ['https://www.googleapis.com/auth/youtube.force-ssl'];
 
 const state = crypto.randomBytes(32).toString('hex');
 
+const youtubeService = google.youtube('v3');
+
 const createAuthURL = () => oauth2Client.generateAuthUrl({
   access_type: 'offline',
   scope: scopes,
@@ -23,4 +25,5 @@ module.exports = {
   createAuthURL,
   state,
   oauth2Client,
+  youtubeService,
 };
