@@ -7,7 +7,7 @@ const playlistController = require('../controllers/playlist');
 module.exports = (app) => {
   app.use('/playlist', router);
   router.get('/', async (req, res) => {
-    googleController.youbtubeService.playlists.list({
+    googleController.youtubeService.playlists.list({
       auth: googleController.oauth2Client,
       part: 'snippet,contentDetails',
       mine: true,
