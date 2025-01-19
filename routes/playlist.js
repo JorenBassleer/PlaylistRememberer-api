@@ -1,17 +1,21 @@
 const express = require('express');
 
 const router = express.Router();
+const googleController = require('../controllers/google');
 const playlistController = require('../controllers/playlist');
 
 module.exports = (app) => {
   app.use('/playlist', router);
   router.get('/', async (req, res) => {
-    try {
-      const playlsitRecords = await playlistController.getAllPlaylists();
-      return res.status(200).json(playlsitRecords);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
+    googleController.youbtubeService.playlists.list({
+      auth: googleController.oauth2Client,
+      part: 'snippet,contentDetails',
+      mine: true,
+      maxResults: 50,
+    }, (err, response) => {
+      if (err) return res.status(500).json();
+      return res.status(200).json(response.data);
+    });
   });
   router.post('/', async (req, res) => {
     try {
