@@ -25,9 +25,9 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --format visualstudio ./",
+    "lint": "eslint --ext .js, --ignore-path .gitignore --format visualstudio ./",
     "test:unit": "echo 'Skipping tests temporarily' && exit 0",
-    "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore --format visualstudio --fix ./"
+    "lint:fix": "eslint --ext .js, --ignore-path .gitignore --format visualstudio --fix ./"
   },
   "repository": {
     "type": "git",
