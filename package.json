@@ -20,8 +20,7 @@
   "devDependencies": {
     "eslint": "^8.33.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-vue": "^9.9.0"
+    "eslint-plugin-import": "^2.27.5"
   },
   "scripts": {
     "start": "node app.js",
