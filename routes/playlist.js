@@ -17,6 +17,7 @@ module.exports = (app) => {
       return res.status(200).json(response.data);
     });
   });
+
   router.post('/', async (req, res) => {
     try {
       if (!req.body.length) return res.status(500);
@@ -30,7 +31,7 @@ module.exports = (app) => {
         }, async (err, response) => {
           if (err) return res.status(500).json();
           await playlistController.createPlaylist({
-            _id: playlist,
+            id: playlist,
             videos: [...response.data.items],
           });
         });
@@ -41,6 +42,16 @@ module.exports = (app) => {
       return res.status(500).json(error);
     }
   });
+
+  router.get('/saved', async (req, res) => {
+    try {
+      const savedPlaylists = await playlistController.getAllPlaylists();
+      return res.status(200).json(savedPlaylists);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  });
+
   router.get('/:id', async (req, res) => {
     try {
       const foundPlaylist = await playlistController.findPlaylistById(req.params.id);
