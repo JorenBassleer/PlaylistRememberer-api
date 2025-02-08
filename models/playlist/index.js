@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const playlistSchema = new Schema({
-  _id: {
+  id: {
     type: String,
     required: true,
   },
