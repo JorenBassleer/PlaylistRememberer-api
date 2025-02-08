@@ -17,14 +17,41 @@ module.exports = (app) => {
       return res.status(200).json(response.data);
     });
   });
+
   router.post('/', async (req, res) => {
     try {
-      const createdPlaylist = await playlistController.createPlaylist(req.body);
-      return res.status(200).json(createdPlaylist);
+      if (!req.body.length) return res.status(500);
+      req.body.forEach((playlist) => {
+        googleController.youtubeService.playlistItems.list({
+          playlistId: playlist,
+          auth: googleController.oauth2Client,
+          part: 'snippet,id',
+          maxResults: 50,
+        // eslint-disable-next-line consistent-return
+        }, async (err, response) => {
+          if (err) return res.status(500).json();
+          await playlistController.createPlaylist({
+            id: playlist,
+            videos: [...response.data.items],
+          });
+        });
+      });
+      const allPlaylists = await playlistController.getAllPlaylists();
+      return res.status(200).json(allPlaylists);
     } catch (error) {
       return res.status(500).json(error);
     }
   });
+
+  router.get('/saved', async (req, res) => {
+    try {
+      const savedPlaylists = await playlistController.getAllPlaylists();
+      return res.status(200).json(savedPlaylists);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  });
+
   router.get('/:id', async (req, res) => {
     try {
       const foundPlaylist = await playlistController.findPlaylistById(req.params.id);
