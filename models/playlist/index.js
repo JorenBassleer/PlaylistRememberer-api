@@ -1,15 +1,19 @@
 const { Schema, model } = require('mongoose');
 
 const playlistSchema = new Schema({
-  tite: {
+  _id: {
     type: String,
     required: true,
+  },
+  title: {
+    type: String,
   },
   description: {
     type: String,
   },
-  videos: [{ type: Schema.Types.ObjectId, ref: 'Video' }],
-  user: { type: Schema.Types.ObjectId, ref: 'User' },
+  videos: {
+    type: Array,
+  },
 });
 
 const Playlist = model('Playlist', playlistSchema);
