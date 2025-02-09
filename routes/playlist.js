@@ -20,22 +20,26 @@ module.exports = (app) => {
 
   router.post('/', async (req, res) => {
     try {
-      if (!req.body.length) return res.status(500);
-      req.body.forEach((playlist) => {
+      if (!req.body.length) return res.status(500).json({ error: 'No playlists provided' });
+
+      await Promise.all(req.body.map((playlist) => new Promise((resolve, reject) => {
         googleController.youtubeService.playlistItems.list({
           playlistId: playlist,
           auth: googleController.oauth2Client,
           part: 'snippet,id',
           maxResults: 50,
-        // eslint-disable-next-line consistent-return
         }, async (err, response) => {
-          if (err) return res.status(500).json();
+          if (err) return reject(res.status(500).json({ error: 'Failed to fetch playlist' }));
+
           await playlistController.createPlaylist({
-            id: playlist,
+            youtubeId: playlist,
             videos: [...response.data.items],
           });
+
+          return resolve();
         });
-      });
+      })));
+
       const allPlaylists = await playlistController.getAllPlaylists();
       return res.status(200).json(allPlaylists);
     } catch (error) {
@@ -47,6 +51,23 @@ module.exports = (app) => {
     try {
       const savedPlaylists = await playlistController.getAllPlaylists();
       return res.status(200).json(savedPlaylists);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  });
+
+  // eslint-disable-next-line consistent-return
+  router.get('/videos/:id', async (req, res) => {
+    try {
+      googleController.youtubeService.playlistItems.list({
+        playlistId: req.params.id,
+        auth: googleController.oauth2Client,
+        part: 'snippet',
+        maxResults: 50,
+      }, async (err, response) => {
+        if (err) return res.status(500).json();
+        return res.status(200).json(response.data.items);
+      });
     } catch (error) {
       return res.status(500).json(error);
     }
